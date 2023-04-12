@@ -1,0 +1,5 @@
+<span matSnackBarActions class="close-button">
+  <button mat-button matSnackBarAction (click)="snackBarRef.dismissWithAction()">CLOSE</button>
+</span>
+<p matSnackBarLabel *ngFor="let message of data.messages" [ngClass]="{'text-danger': data.status == 'error', 'text-success': data.status == 'success'}">{{message}}</p>
+

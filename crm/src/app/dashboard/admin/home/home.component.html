@@ -1,0 +1,226 @@
+<div class="row">
+
+	<!-- Left side columns -->
+	<div class="col-lg-8">
+	  <div class="row">
+
+	    <!-- Sales Card -->
+	    <div class="col-xxl-4 col-md-6">
+	      <div class="card info-card sales-card">
+
+	        <div class="filter">
+	          <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+	          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+	            <li class="dropdown-header text-start">
+	              <h6>Filter</h6>
+	            </li>
+
+	            <li><a class="dropdown-item" href="#">Today</a></li>
+	            <li><a class="dropdown-item" href="#">This Month</a></li>
+	            <li><a class="dropdown-item" href="#">This Year</a></li>
+	          </ul>
+	        </div>
+
+	        <div class="card-body">
+	          <h5 class="card-title">Total companies</h5>
+
+	          <div class="d-flex align-items-center">
+	            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+	              <i class="bi bi-cart"></i>
+	            </div>
+	            <div class="ps-3">
+	              <h6>{{ data.total_companies }}</h6>
+
+	            </div>
+	          </div>
+	        </div>
+
+	      </div>
+	    </div><!-- End Sales Card -->
+
+	    <!-- Revenue Card -->
+	    <div class="col-xxl-4 col-md-6">
+	      <div class="card info-card revenue-card">
+
+	        <div class="filter">
+	          <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+	          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+	            <li class="dropdown-header text-start">
+	              <h6>Filter</h6>
+	            </li>
+
+	            <li><a class="dropdown-item" href="#">Today</a></li>
+	            <li><a class="dropdown-item" href="#">This Month</a></li>
+	            <li><a class="dropdown-item" href="#">This Year</a></li>
+	          </ul>
+	        </div>
+
+	        <div class="card-body">
+	          <h5 class="card-title">Total invitations</h5>
+
+	          <div class="d-flex align-items-center">
+	            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+	              <i class="bi bi-currency-dollar"></i>
+	            </div>
+	            <div class="ps-3">
+	              <h6>{{ data.total_invitations }}</h6>
+	            </div>
+	          </div>
+	        </div>
+
+	      </div>
+	    </div><!-- End Revenue Card -->
+
+	    <!-- Customers Card -->
+	    <div class="col-xxl-4 col-xl-12">
+
+	      <div class="card info-card customers-card">
+
+	        <div class="filter">
+	          <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+	          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+	            <li class="dropdown-header text-start">
+	              <h6>Filter</h6>
+	            </li>
+
+	            <li><a class="dropdown-item" href="#">Today</a></li>
+	            <li><a class="dropdown-item" href="#">This Month</a></li>
+	            <li><a class="dropdown-item" href="#">This Year</a></li>
+	          </ul>
+	        </div>
+
+	        <div class="card-body">
+	          <h5 class="card-title">Total employers</h5>
+
+	          <div class="d-flex align-items-center">
+	            <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+	              <i class="bi bi-people"></i>
+	            </div>
+	            <div class="ps-3">
+	              <h6>{{ data.total_employees }}</h6>
+	            </div>
+	          </div>
+
+	        </div>
+	      </div>
+
+	    </div><!-- End Customers Card --> 
+
+	    <!-- Recent Sales -->
+	    <div class="col-12">
+	      <div class="card recent-sales overflow-auto"> 
+
+	        <div class="card-body">
+	          <h5 class="card-title">List of invitations</h5>
+
+	          <table class="table table-borderless datatable">
+	            <thead>
+	              <tr>
+	                <th scope="col">#</th>
+	                <th scope="col">Email</th>
+	                <th scope="col">Name</th>
+	                <th scope="col">date</th>
+	                <th scope="col">Status</th>
+	              </tr>
+	            </thead>
+	            <tbody>
+	              <tr *ngFor='let invitation of data.invitations'>
+	                <th scope="row"><a href="#">#{{ invitation.id }}</a></th>
+	                <td>{{ invitation.name }}</td>
+	                <td><a href="#" class="text-primary">{{ invitation.email }}</a></td>
+	                <td>{{ invitation.created_at | date:'short' }}</td>
+	                <td>
+	                	<span class="badge" [ngClass]="{'bg-danger': invitation.status == 'pause',
+		      									'bg-warning': invitation.status == 'sent',
+		      									'bg-success': invitation.status == 'validated'}">
+		      				<i class="bi bi-exclamation-octagon me-1"></i> 
+		      				{{ invitation.status }} 
+		      			</span>
+	                </td>
+	              </tr> 
+	            </tbody>
+	          </table>
+
+	        </div>
+
+	      </div>
+	    </div><!-- End Recent Sales -->
+
+	    <!-- Top Selling -->
+	    <div class="col-12">
+	      <div class="card top-selling overflow-auto"> 
+
+	        <div class="card-body pb-0">
+	          <h5 class="card-title">List of employers</h5>
+
+	          <table class="table table-borderless">
+	            <thead>
+	              <tr>
+	                <th scope="col">Id</th>
+	                <th scope="col">Name</th>
+	                <th scope="col">Email</th>
+	                <th scope="col">date</th> 
+	              </tr>
+	            </thead>
+	            <tbody>
+	              <tr *ngFor='let employe of data.employees'>
+	                <td>#{{ employe.id }}</td>
+	                <td>{{ employe.name }}</td>
+	                <td>{{ employe.email }}</td>
+	                <td>{{ employe.created_at | date:'short' }}</td>
+	              </tr> 
+	            </tbody>
+	          </table>
+
+	        </div>
+
+	      </div>
+	    </div><!-- End Top Selling -->
+
+	  </div>
+	</div><!-- End Left side columns -->
+
+	<!-- Right side columns -->
+	<div class="col-lg-4">
+
+	  <!-- Recent Activity -->
+	  <div class="card">
+	    <div class="filter">
+	      <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+	      <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+	        <li class="dropdown-header text-start">
+	          <h6>Filter</h6>
+	        </li>
+
+	        <li><a class="dropdown-item" href="#">Today</a></li>
+	        <li><a class="dropdown-item" href="#">This Month</a></li>
+	        <li><a class="dropdown-item" href="#">This Year</a></li>
+	      </ul>
+	    </div>
+
+	    <div class="card-body">
+	      <h5 class="card-title">Recent Activity</h5>
+
+	      <div class="activity">
+
+	        <div class="activity-item d-flex" *ngFor='let log of data.logs'>
+	          <div class="activite-label">{{ log.created_at | date:'M/d/yy, h:mm' }}</div>
+	           <i class='bi bi-circle-fill activity-badge align-self-start'
+	          			[ngClass]="{'text-success': log.action == 'create',
+  									'text-danger': log.action == 'delete',
+  									'text-warning': log.action == 'update'}"
+	          ></i>
+	          <div class="activity-content">
+	            <!-- Quia quae rerum <a href="#" class="fw-bold text-dark">explicabo officiis</a> beatae -->
+	            {{ log.message }}
+	          </div>
+	        </div><!-- End activity item-->
+
+	      </div>
+
+	    </div>
+	  </div><!-- End Recent Activity -->  
+
+	</div><!-- End Right side columns -->
+
+</div>

@@ -1,0 +1,48 @@
+<div class="card">
+<div class="card-body">
+  <h5 class="card-title">Floating labels Form</h5>
+
+  <!-- Floating Labels Form -->
+  <form class="row g-3" [formGroup]='invitationForm' (submit)='createInvitation()'>
+    <div class="col-md-12">
+      <div class="form-floating">
+        <input 	type="text" class="form-control" id="floatingName" placeholder="Your Name"
+        		formControlName='name'
+        		>
+        <label for="floatingName">Name</label>
+      </div>
+    </div>
+    <div class="col-md-12">
+      <div class="form-floating">
+        <input 	type="email" class="form-control" id="floatingEmail" placeholder="Your Email"
+        		formControlName='email'
+        		>
+        <label for="floatingEmail">Email</label>
+      </div>
+    </div>
+    <div class="col-md-12">
+      <div class="form-floating"> 
+        <select class="form-control" formControlName='companie'>
+        	<option *ngFor='let companie of companies' [value]="companie.id">{{ companie.name }}</option>
+        </select>
+        <label for="floatingPassword">Companie</label>
+      </div>
+    </div>
+    <div class="col-md-12">
+      <div class="form-floating"> 
+           <div class="form-check">
+	        <input class="form-check-input" type="checkbox" id="createAndSend" 
+	        	[checked]='send'
+	        	(change)='activeSend($event)'>
+	        <label class="form-check-label" for="createAndSend">Create and send invitation</label>
+	      </div>
+      </div>
+    </div>  
+    <div class="text-center create-companie">
+      <button class="btn btn-secondary btn-lg btn-block" [mat-dialog-close]='invitation'>Close</button>
+      <button class="btn btn-primary btn-lg btn-block" type="submit">Submit</button>
+    </div>
+  </form><!-- End floating Labels Form -->
+
+</div>
+</div>

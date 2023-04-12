@@ -1,0 +1,65 @@
+<div class="card">
+<div class="card-body">
+  <h5 class="card-title">Floating labels Form</h5>
+
+  <!-- Floating Labels Form -->
+  <form class="row g-3" [formGroup]='companieForm' (submit)='createCompanie()'>
+    <div class="col-md-12">
+      <div class="form-floating">
+        <input 	type="text" class="form-control" id="floatingName" placeholder="Your Name"
+        		formControlName='name'
+        		>
+        <label for="floatingName">Name</label>
+      </div>
+    </div>
+    <div class="col-md-12">
+      <div class="form-floating">
+        <select class="form-control" id="floatingEmail" formControlName='form'>
+          <option value="sarl">SARL</option>
+          <option value="sasu">SASU</option>
+          <option value="sasu">SAS</option>
+          <option value="sa">SA</option>
+          <option value="snc">SNC</option>
+          <option value="sca">SCA</option>
+          <option value="scs">SCS</option>
+        </select>
+        <label for="floatingEmail">Form</label>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="form-floating">
+        <input 	type="text" class="form-control" id="floatingPassword" placeholder="Password"
+        		formControlName='rc'
+        		>
+        <label for="floatingPassword">RC</label>
+      </div>
+    </div>
+    <div class="col-md-6">
+	    <div class="form-floating">
+	      <input	type="text" class="form-control" id="floatingCity" placeholder="City"
+	      			formControlName='ice'>
+	      <label for="floatingCity">ICE</label>
+	    </div>
+    </div>
+    <div class="col-12">
+      <div class="form-floating">
+        <textarea	class="form-control" placeholder="Address" id="floatingTextarea" style="height: 100px;"
+        			formControlName='address'></textarea>
+        <label for="floatingTextarea">Address</label>
+      </div>
+    </div>
+    <div class="col-md-12">
+      <div class="form-floating">
+        <input 	type="text" class="form-control" id="floatingCity" placeholder="City"
+        		formControlName='capital'>
+        <label for="floatingCity">CAPITAL</label>
+      </div>
+    </div>  
+    <div class="text-center create-companie">
+      <button class="btn btn-secondary btn-lg btn-block" [mat-dialog-close]='companie'>Close</button>
+      <button class="btn btn-primary btn-lg btn-block" type="submit">Submit</button>
+    </div>
+  </form><!-- End floating Labels Form -->
+
+</div>
+</div>
