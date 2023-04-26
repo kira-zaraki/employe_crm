@@ -30,8 +30,8 @@ export class HomeComponent implements OnInit {
         this.employe = user.data;
         this.employeForm = this.formBuilder.group({
           user: this.formBuilder.group({
-            name: [this.employe.user.name],
-            email: [this.employe.user.email],
+            name: [this.employe.name],
+            email: [this.employe.email],
           }),
           profile: this.formBuilder.group({
             name: [this.employe.profile.name],

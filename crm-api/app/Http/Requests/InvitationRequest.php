@@ -2,11 +2,9 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Contracts\Validation\Validator;
-use Illuminate\Http\Exceptions\HttpResponseException;
+use App\Http\Requests\FormRequest;
 
-class CompaniePostRequest extends FormRequest
+class InvitationRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,11 +23,9 @@ class CompaniePostRequest extends FormRequest
     {
         return [
             'name' => 'string|required',
-            'form' => 'string|required|in:sarl,sas,sa,snc,sca,scs',
-            'rc' => 'string|required',
-            'ice' => 'string|required',
-            'address' => 'string|required',
-            'capital' => 'integer|required',
+            'email' => 'email|required',
+            'companie' => 'integer|required',
+            'status' => 'string|required',
         ];
-    } 
+    }
 }

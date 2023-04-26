@@ -5,12 +5,17 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Cache;
+
+use App\Http\Requests\UserRequest;
 
 use App\Models\User;
 use App\Models\Profile;
 use App\Models\Companie;
 use App\Models\Invitation;
 use App\Models\Log;
+
+use App\Events\LogGenerate;
 
 
     /**
@@ -23,43 +28,27 @@ class UserController extends Controller
      */  
 
     public function currentUser($message = 'User successfully listed')
-    { 
-        return response()->render('success',$message , [
-            'user' => Auth()->user(),
-            'profile' => Auth()->user()->profile,
-            'companie' => Auth()->user()->current_companie,
-            'colleagues' => Auth()->user()->current_companie->employes()->get()->except(Auth::id()),
-        ]); 
+    {  
+        $user = Cache::remember('user_'.Auth::id(), 240, function () {
+            return Auth()->user()->append('colleagues');
+        });
+
+        return response()->render('success',$message , $user); 
     }
 
     /**
      * Update the current user information
      */ 
 
-    public function update(Request $request)
-    {
-        $validate = Validator::make($request->all(),[
-            'user.name' => 'required|string',
-            'user.email' => 'required|string|email',
-            'profile.address' => 'required|string',
-            'profile.phone' => 'required|string',
-        ]);
-
-        if($validate->fails())
-            return response()->render('error', $validate->messages()->all());
+    public function update(UserRequest $request)
+    { 
 
         $user = Auth()->user();
 
         $user->update($request->get('user'));
         $user->profile()->update($request->get('profile'));
-
-        Log::create([
-            'action' => 'update',
-            'model' => 'user',
-            'message' => 'Employe '.Auth()->user()->name.' update information account',
-            'target' => Auth()->user()->id,
-            'trigger' => Auth()->user()->id,
-        ]);
+ 
+        LogGenerate::dispatch($user, 'update', 'Employe '.Auth()->user()->name.' update information account');
 
         return $this->currentUser('Account successfully updated');
     }
@@ -70,7 +59,10 @@ class UserController extends Controller
 
     public function admin()
     {
-        return response()->render('success','Admin successfully selected', Auth()->user());
+        $admin = Cache::remember('admin_'.Auth::id(), 240, function () {
+            return Auth()->user();
+        });
+        return response()->render('success','Admin successfully selected', $admin);
     }
 
     /**
@@ -79,13 +71,17 @@ class UserController extends Controller
 
     public function adminMainData()
     {
-        return response()->render('success','Admin data successfully listed', [
-            'total_companies' => Companie::count(),
-            'total_invitations' => Invitation::count(),
-            'total_employees' => User::role('employe')->latest()->count(),
-            'invitations' => Invitation::limit(5)->latest()->get(),
-            'employees' => User::role('employe')->limit(5)->latest()->get(),
-            'logs' => Log::limit(6)->latest()->get(),
-        ]);
+        $adminMainData = Cache::remember('adminMainData_'.Auth::id(), 120, function () {
+            return [
+                'total_companies' => Companie::count(),
+                'total_invitations' => Invitation::count(),
+                'total_employees' => User::role('employe')->count(),
+                'invitations' => Invitation::take(5)->get(),
+                'employees' => User::role('employe')->take(5)->get(),
+                'logs' => Log::take(6)->get(),
+            ];
+        });
+
+        return response()->render('success','Admin data successfully listed', $adminMainData);
     }
 }

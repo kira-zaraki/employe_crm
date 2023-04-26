@@ -8,13 +8,17 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
+
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Relations\BelongsTo; 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
-use Hash; 
+use App\Casts\Hash; 
 
 use App\Models\Companie;
+
+use App\Models\Scopes\LastestScope;
 
 class User extends Authenticatable
 {
@@ -49,9 +53,26 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'password' => Hash::class
     ]; 
 
     protected $guard_name = 'sanctum';
+
+
+    /**
+     * The relationships that should always be loaded.
+     *
+     * @var array
+     */
+    protected $with = ['companie','profile', 'roles']; 
+    
+    /**
+     * The "booted" method of the model.
+     */
+    protected static function booted(): void
+    {
+        static::addGlobalScope(new LastestScope);
+    }
 
     public function profile(): HasOne {
         return $this->hasOne(Profile::class);
@@ -67,5 +88,15 @@ class User extends Authenticatable
 
     public function current_companie(): BelongsTo {
         return $this->belongsTo(Companie::class, 'companie');
+    } 
+
+    /**
+     * Add new colleagues attribute.
+     */
+    public function colleagues(): Attribute
+    {
+        return new Attribute(
+            get: fn () => $this->current_companie->employes()->get()->except($this->id),
+        );
     }
 }

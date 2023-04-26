@@ -22,7 +22,7 @@ export class EmployeComponent implements OnInit {
     this.routeData.data.subscribe(({user}) => {
       if(user.code){
         this.colleagues = user.data.colleagues;
-        this.employe = user.data.user;
+        this.employe = user.data;
       }
     });
   }

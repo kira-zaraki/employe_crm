@@ -31,16 +31,21 @@ export class SignUpComponent implements OnInit {
         if(this.employe.status == 'validated')
           this.router.navigate(['/sign-in']);
         this.employeForm = this.formBuilder.group({
-          name: [this.employe.name],
-          address: ['lorem ipsum'],
-          phone: ['0600000000'],
-          email: [this.employe.email],
-          birthday: [],
-          password: ['123456'],
-          companie: [this.employe.companie],
+          user: this.formBuilder.group({
+            email: [this.employe.email],
+            name: [this.employe.name],
+            password: ['123456'],
+            companie: [this.employe.companie],
+          }),
+          profile: this.formBuilder.group({
+            address: ['lorem ipsum'],
+            phone: ['0600000000'],
+            name: [this.employe.name],
+            birthday: [],
+          })
         });
       } 
-    });
+    }); 
   }
 
   saveEmploye(){

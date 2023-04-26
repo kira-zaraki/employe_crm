@@ -15,7 +15,8 @@ export class HttpClientInterceptor implements HttpInterceptor {
   constructor() {}
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
-    let req = request.clone({url: environment.apiUrl+request.url});
+    let req = request.clone({ url: environment.apiUrl+request.url });
+    req = req.clone({ headers: req.headers.set('Accept', 'application/json') });
     if(localStorage.getItem('user'))
       req = req.clone({
         setHeaders:{

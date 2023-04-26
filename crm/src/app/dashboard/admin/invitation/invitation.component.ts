@@ -1,12 +1,15 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { CreateInvitationComponent } from './dialog/create-invitation/create-invitation.component';
+import { MatSnackBar, MatSnackBarRef } from '@angular/material/snack-bar';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute } from '@angular/router';
 
-import { InvitationService } from './invitation.service'; 
+import { InvitationService } from './invitation.service';
+
+import { CreateInvitationComponent } from './dialog/create-invitation/create-invitation.component';
+import { MessagesComponent } from '../../../messages/messages.component';
 
 export interface InvitationData {
   id: number;
@@ -31,6 +34,7 @@ export class InvitationComponent implements OnInit {
   constructor(
     private dialog: MatDialog,
     private companieService: InvitationService,
+    private snackBar: MatSnackBar,
     private routeData: ActivatedRoute,
   ) { }
 
@@ -67,8 +71,10 @@ export class InvitationComponent implements OnInit {
 
   deleteInvitation(invitation: InvitationData){
     this.companieService.deleteInvitation(invitation).subscribe(response=>{
-      this.invitations = response.data;
-      this.refreshData();
+      if(response.code)
+        this.invitations = response.data;
+        this.refreshData();
+      this.snackBar.openFromComponent(MessagesComponent,{data: response});
     });
   }
 

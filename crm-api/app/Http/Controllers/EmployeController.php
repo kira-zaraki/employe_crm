@@ -4,10 +4,13 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 use App\Models\User;
 use App\Models\Role;
 use App\Models\Log;
+
+use App\Events\LogGenerate;
 
 class EmployeController extends Controller
 {
@@ -17,7 +20,10 @@ class EmployeController extends Controller
 
     public function get($message = 'Employes successfully listed')
     {
-        return response()->render('success',$message, User::with(['companie', 'roles'])->latest()->get()->except(Auth::id())); 
+        $employees = Cache::remember('employees', 120, function () {
+            return User::all()->except(Auth::id());
+        });
+        return response()->render('success',$message, $employees); 
     }
 
     /**
@@ -28,13 +34,7 @@ class EmployeController extends Controller
 
         $sucess = $user->delete();
         if($sucess)
-            Log::create([
-                'action' => 'delete',
-                'model' => 'user',
-                'message' => 'Admin '.Auth()->user()->name.' delete employe '.$user->name,
-                'target' => $user->id,
-                'trigger' => Auth()->user()->id,
-            ]);
+            LogGenerate::dispatch($user, 'delete', 'Admin '.Auth()->user()->name.' delete employe '.$user->name);
         return $this->get('Employe successfully deleted');
     }
 

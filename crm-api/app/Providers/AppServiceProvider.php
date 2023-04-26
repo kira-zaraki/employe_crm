@@ -36,7 +36,7 @@ class AppServiceProvider extends ServiceProvider
             ];
             if($data)
                 $render['data'] = $data;
-            return $render;
+            return response($render);
         });
         
         Schema::defaultStringLength(125);

@@ -6,45 +6,30 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 
+use App\Http\Requests\UserRequest;
+
 use App\Models\User;
 use App\Models\Profile;
 use App\Models\Invitation;
 use App\Models\Role;
 use App\Models\Log;
 
-use Hash; 
+use App\Events\LogGenerate;
+
 
 class AuthController extends Controller
 {
     /**
      * Accepte employe and complete the subscription
      */
-    public function signUp(Request $request, Invitation $invitation){
-        $validate = Validator::make($request->all(),[
-            'name' => 'required|string',
-            'email' => 'required|string|email',
-            'address' => 'required|string',
-            'phone' => 'required|string',
-            'birthday' => 'required|date',
-            'password' => 'required|string'
-        ]);
-
-        if($validate->fails())
-            return response()->render('error', $validate->messages()->all());
-
+    public function signUp(UserRequest $request, Invitation $invitation){ 
+        
         if($invitation->status == 'validated')
             return response()->render('error', 'Employed already subscribed');
 
-        $user = $request->only('name', 'email', 'password', 'companie');
+        $user = User::create($request->user);
         
-
-        $user['password'] = Hash::make($user['password']);
-        $user = User::create($user);
-        
-        $profile = $request->except(['email', 'password', 'companie']);
-
-
-        $profile = Profile::create($profile);
+        $profile = Profile::create($request->profile);
         $user->profile()->save($profile);
         $user->save($invitation->toArray());
 
@@ -52,13 +37,7 @@ class AuthController extends Controller
 
         if($user){
             $invitation->update(['status' => 'validated']);
-            Log::create([
-                'action' => 'create',
-                'model' => 'user',
-                'message' => "Employe {$user->name} successfully valid invitation",
-                'target' => $user->id,
-                'trigger' => $user->id,
-            ]);
+            LogGenerate::dispatch($user, 'create', "Employe {$user->name} successfully valid invitation");
         }
 
         return response()->render('success', 'Your account successfully registred');

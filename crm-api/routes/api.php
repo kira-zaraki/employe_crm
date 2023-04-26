@@ -46,6 +46,7 @@ Route::middleware('auth:sanctum')->group(function () {
             route::post('create', [InvitationController::class, 'create']);
             route::get('get', [InvitationController::class, 'get']);
             route::delete('delete/{invitation}', [InvitationController::class, 'delete']);
+            route::get('send/{invitation}', [InvitationController::class, 'sendEmail']);
         });
 
         route::prefix('employe')->group(function(){

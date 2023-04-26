@@ -5,11 +5,14 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Cache;
 
-use App\Http\Requests\CompaniePostRequest;
+use App\Http\Requests\CompanieRequest;
 
 use App\Models\Companie;
 use App\Models\Log;
+
+use App\Events\LogGenerate;
 
 class CompanieController extends Controller
 {
@@ -17,28 +20,12 @@ class CompanieController extends Controller
      * Create a new compain
      */
 
-    public function create(Request $request){ 
-        $validate = Validator::make($request->all(),[
-            'name' => 'string|required',
-            'form' => 'string|required|in:sarl,sasu,sas,sa,snc,sca,scs',
-            'rc' => 'string|required',
-            'ice' => 'string|required',
-            'address' => 'string|required',
-            'capital' => 'integer|required',
-        ]);
-        if($validate->fails())
-            return response()->render('error', $validate->messages()->all());
+    public function create(CompanieRequest $request){  
         $companie = $request->all();
-        $companie['founder']= Auth()->user()->id;
+        $companie['founder'] = Auth()->user()->id;
         $companie = Companie::create($companie);
-        if($companie){
-            Log::create([
-                'action' => 'create',
-                'model' => 'companie',
-                'message' => "Admin ".Auth()->user()->name." create ".$companie->name." companie",
-                'target' => $companie->id,
-                'trigger' => Auth()->user()->id,
-            ]);
+        if($companie){ 
+            LogGenerate::dispatch($companie, 'create', "Admin ".Auth()->user()->name." create ".$companie->name." companie");
             return $this->get('Companie successfully created you can create more');
         }
         else
@@ -50,7 +37,10 @@ class CompanieController extends Controller
      */
     public function get($message = 'Companie successfully listed')
     {
-        return response()->render('success',$message ,Companie::latest()->get());
+        $companie = Cache::remember('companies', 120, function () {
+            return collect(Companie::cursor());
+        });
+        return response()->render('success',$message ,$companie);
     }
 
     /**
@@ -61,18 +51,11 @@ class CompanieController extends Controller
         if($companie->employes->count())
             return response()->render('error', 'Employees associated with this companie');
 
-        $companieId = $companie->id;
+        $companieCache = $companie;
 
         $success = $companie->delete();
-        if($success)
-            Log::create([
-            'action' => 'delete',
-            'model' => 'companie',
-            'message' => "Admin ".Auth()->user()->name." delete ".$companie->name." companie",
-            'target' =>  $companieId,
-            'trigger' => Auth()->user()->id,
-        ]);
-
+        if($success) 
+            LogGenerate::dispatch($companieCache, 'delete', "Admin ".Auth()->user()->name." delete ".$companie->name." companie");
         return $this->get('Companie successfully deleted');
     }
 }

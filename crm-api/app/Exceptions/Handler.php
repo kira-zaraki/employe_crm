@@ -3,6 +3,9 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Http\Request;
+use Illuminate\Auth\AuthenticationException;
+use Symfony\Component\HttpFoundation\Response;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -45,4 +48,15 @@ class Handler extends ExceptionHandler
             //
         });
     }
+
+    /*/**
+     * Determine if the exception handler response should be JSON.
+     */
+    protected function shouldReturnJson($request, Throwable $e): bool{
+        return true;
+    }
+
+    protected function unauthenticated($request, AuthenticationException $exception): Response{
+        return response('unauthorized.', 500);
+    } 
 }
